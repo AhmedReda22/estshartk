@@ -58,18 +58,22 @@ export default function Home() {
 
           <div className="header-section text-center mb-5">
             <div className="animated-heading">
-              {"مستشارك القانوني".split("").map((char, i) => (
-                <span key={i} className="letter">
-                  {char === " " ? <span className="space"> </span> : char}
-                </span>
-              ))}
-            </div>
+    <h1 className="display-4 display-md-3 display-lg-2"> {/* Responsive font sizes */}
+      {"مستشارك القانوني".split("").map((char, i) => (
+        <span key={i} className="letter">
+          {char === " " ? <span className="space"> </span> : char}
+        </span>
+      ))}
+    </h1>
+  </div>
             <div className="hero-description p-4 bg-light rounded mt-3">
-              <h3 className="text-secondary">
-                مبادرة قانونية تهدف إلى تقديم الاستشارات القانونية
-              </h3>
-              <p className="lead">للفئات المستهدفة والأشد حاجة ومن في حكمهم</p>
-            </div>
+  <h3 className="text-secondary fs-5 fs-md-4"> {/* Responsive font size */}
+    مبادرة قانونية تهدف إلى تقديم الاستشارات القانونية
+  </h3>
+  <p className="lead fs-6 fs-md-5"> {/* Responsive font size */}
+    للفئات المستهدفة والأشد حاجة ومن في حكمهم
+  </p>
+</div>
           </div>
 
           <div id="form_render">
