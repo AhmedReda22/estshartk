@@ -12,6 +12,7 @@ export default function Home() {
       const response = await fetch("http://16.170.203.49/api/estshara", {
         method: "POST",
         body: formData,
+        mode: "cors",
       });
 
       if (response.ok) {
@@ -22,6 +23,8 @@ export default function Home() {
         });
         form.reset();
       } else {
+        const errorText = await response.text();
+        console.error("Server responded with error:", errorText);
         Swal.fire({
           icon: "error",
           title: "خطأ",
@@ -29,7 +32,7 @@ export default function Home() {
         });
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Network error:", error.message || error);
       Swal.fire({
         icon: "error",
         title: "تعذر الاتصال بالخادم",
@@ -80,7 +83,6 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* البيانات الشخصية */}
               <div className="form-section card mb-4">
                 <div className="card-header bg-primary text-white">
                   <h3 className="mb-0">البيانات الشخصية</h3>
@@ -122,9 +124,7 @@ export default function Home() {
                         required
                         title="عشرة أرقام"
                       />
-                      <small className="form-text text-muted">
-                        عشرة أرقام
-                      </small>
+                      <small className="form-text text-muted">عشرة أرقام</small>
                     </div>
                     <div className="col-md-6 mb-4">
                       <label className="form-label">
@@ -234,7 +234,6 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* تفاصيل الاستشارة */}
               <div className="form-section card mb-4">
                 <div className="card-header bg-primary text-white">
                   <h3 className="mb-0">تفاصيل الاستشارة القانونية</h3>
