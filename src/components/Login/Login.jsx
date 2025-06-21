@@ -38,7 +38,7 @@ export default function Login() {
     if (contentType && contentType.includes("application/json")) {
       data = await response.json();
     } else {
-      throw new Error("حدث خطأ غير متوقع من الخادم. الرجاء المحاولة لاحقًا.");
+      throw new Error("تعذر تسجيل الدخول. يرجى التحقق من صحة البريد الإلكتروني وكلمة المرور والمحاولة مرة أخرى.");
     }
 
     if (!response.ok) {

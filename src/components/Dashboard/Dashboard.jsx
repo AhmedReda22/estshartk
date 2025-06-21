@@ -38,7 +38,7 @@ export default function Dashboard() {
           </li>
           <li className={location.pathname === "/dashboard/profile" ? "active" : ""}>
             <Link to="/dashboard/profile">
-              <FontAwesomeIcon icon={faUser} /> <span>الملف +الشخصي</span>
+              <FontAwesomeIcon icon={faUser} /> <span>الملف الشخصي</span>
             </Link>
           </li>
         </ul>
