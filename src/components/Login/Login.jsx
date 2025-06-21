@@ -24,7 +24,7 @@ export default function Login() {
   setError("");
 
   try {
-    const response = await fetch("http://16.170.203.49/api/auth/login", {
+    const response = await fetch("https://stellarwebsocket.shop/Estshara/public/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

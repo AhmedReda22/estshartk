@@ -9,7 +9,7 @@ export default function Home() {
     const formData = new FormData(form);
 
     try {
-      const response = await fetch("http://16.170.203.49/api/estshara", {
+      const response = await fetch("https://stellarwebsocket.shop/Estshara/public/api/estshara", {
         method: "POST",
         body: formData,
         mode: "cors",
