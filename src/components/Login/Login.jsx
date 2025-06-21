@@ -19,43 +19,47 @@ export default function Login() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError("");
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
-  try {
-    const response = await fetch("http://16.170.203.49/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData)
-    });
+    try {
+      // Use HTTPS for production and HTTP for local development
+      const apiUrl = process.env.NODE_ENV === 'production' 
+        ? 'https://16.170.203.49/api/auth/login' 
+        : 'http://16.170.203.49/api/auth/login';
+      
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData)
+      });
 
-    const contentType = response.headers.get("content-type");
-    let data;
+      const contentType = response.headers.get("content-type");
+      let data;
 
-    if (contentType && contentType.includes("application/json")) {
-      data = await response.json();
-    } else {
-      throw new Error("حدث خطأ غير متوقع من الخادم. الرجاء المحاولة لاحقًا.");
+      if (contentType && contentType.includes("application/json")) {
+        data = await response.json();
+      } else {
+        throw new Error("حدث خطأ غير متوقع من الخادم. الرجاء المحاولة لاحقًا.");
+      }
+
+      if (!response.ok) {
+        throw new Error(data?.message || "فشل في تسجيل الدخول. الرجاء التحقق من البريد الإلكتروني أو كلمة المرور.");
+      }
+
+      // تسجيل الدخول ناجح
+      navigate("/dashboard");
+
+    } catch (err) {
+      // عرض رسالة الخطأ بشكل احترافي للمستخدم
+      setError(err.message || "حدث خطأ أثناء محاولة تسجيل الدخول. الرجاء المحاولة لاحقًا.");
+    } finally {
+      setLoading(false);
     }
-
-    if (!response.ok) {
-      throw new Error(data?.message || "فشل في تسجيل الدخول. الرجاء التحقق من البريد الإلكتروني أو كلمة المرور.");
-    }
-
-    // تسجيل الدخول ناجح
-    navigate("/dashboard");
-
-  } catch (err) {
-    // عرض رسالة الخطأ بشكل احترافي للمستخدم
-    setError(err.message || "حدث خطأ أثناء محاولة تسجيل الدخول. الرجاء المحاولة لاحقًا.");
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   return (
     <div className="login-page">
@@ -90,11 +94,10 @@ export default function Login() {
         <h1 className="login-title">تسجيل الدخول</h1>
 
         {error && (
-  <div className="text-red-600 bg-red-100 p-2 mt-4 rounded shadow-sm text-sm text-center">
-    {error}
-  </div>
-)}
-
+          <div className="text-red-600 bg-red-100 p-2 mt-4 rounded shadow-sm text-sm text-center">
+            {error}
+          </div>
+        )}
 
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="form-group">
@@ -315,16 +318,36 @@ export default function Login() {
           cursor: not-allowed;
         }
         
-        .alert {
-          padding: 12px;
-          border-radius: 6px;
-          margin-bottom: 20px;
+        .text-red-600 {
+          color: #e53e3e;
         }
         
-        .alert-danger {
-          background-color: #f8d7da;
-          color: #721c24;
-          border: 1px solid #f5c6cb;
+        .bg-red-100 {
+          background-color: #fed7d7;
+        }
+        
+        .p-2 {
+          padding: 0.5rem;
+        }
+        
+        .mt-4 {
+          margin-top: 1rem;
+        }
+        
+        .rounded {
+          border-radius: 0.25rem;
+        }
+        
+        .shadow-sm {
+          box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        
+        .text-sm {
+          font-size: 0.875rem;
+        }
+        
+        .text-center {
+          text-align: center;
         }
       `}</style>
     </div>
