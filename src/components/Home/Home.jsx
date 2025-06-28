@@ -8,13 +8,18 @@ export default function Home() {
     const form = e.target;
     const formData = new FormData(form);
 
-    try {
-      const response = await fetch("https://stellarwebsocket.shop/Estshara/public/api/estshara", {
-        method: "POST",
-        body: formData,
-        mode: "cors",
-      });
+    console.log("Submitting form data:", Object.fromEntries(formData.entries()));
 
+    try {
+      const response = await fetch(
+        "https://stellarwebsocket.shop/Estshara/public/api/estshara",
+        {
+          method: "POST",
+          body: formData,
+          mode: "cors",
+        }
+      );
+console.log("Response:", response);
       if (response.ok) {
         Swal.fire({
           icon: "success",
@@ -50,30 +55,24 @@ export default function Home() {
           id="custom_form"
           onSubmit={handleSubmit}
         >
-          <input
-            type="hidden"
-            name="token"
-            value="39k0bdo35084cksokc0kwwocgkk0kgs"
-          />
-
           <div className="header-section text-center mb-5">
             <div className="animated-heading">
-    <h1 className="display-4 display-md-3 display-lg-2"> {/* Responsive font sizes */}
-      {"مستشارك القانوني".split("").map((char, i) => (
-        <span key={i} className="letter">
-          {char === " " ? <span className="space"> </span> : char}
-        </span>
-      ))}
-    </h1>
-  </div>
+              <h1 className="display-4 display-md-3 display-lg-2">
+                {"مستشارك القانوني".split("").map((char, i) => (
+                  <span key={i} className="letter">
+                    {char === " " ? <span className="space"> </span> : char}
+                  </span>
+                ))}
+              </h1>
+            </div>
             <div className="hero-description p-4 bg-light rounded mt-3">
-  <h3 className="text-secondary fs-5 fs-md-4"> {/* Responsive font size */}
-    مبادرة قانونية تهدف إلى تقديم الاستشارات القانونية
-  </h3>
-  <p className="lead fs-6 fs-md-5"> {/* Responsive font size */}
-    للفئات المستهدفة والأشد حاجة ومن في حكمهم
-  </p>
-</div>
+              <h3 className="text-secondary fs-5 fs-md-4">
+                مبادرة قانونية تهدف إلى تقديم الاستشارات القانونية
+              </h3>
+              <p className="lead fs-6 fs-md-5">
+                للفئات المستهدفة والأشد حاجة ومن في حكمهم
+              </p>
+            </div>
           </div>
 
           <div id="form_render">
@@ -87,6 +86,7 @@ export default function Home() {
                 </p>
               </div>
 
+              {/* القسم الأول: البيانات الشخصية */}
               <div className="form-section card mb-4">
                 <div className="card-header bg-primary text-white">
                   <h3 className="mb-0">البيانات الشخصية</h3>
@@ -126,7 +126,6 @@ export default function Home() {
                         name="national_number"
                         className="form-control"
                         required
-                        title="عشرة أرقام"
                       />
                       <small className="form-text text-muted">عشرة أرقام</small>
                     </div>
@@ -238,6 +237,7 @@ export default function Home() {
                 </div>
               </div>
 
+              {/* القسم الثاني: تفاصيل الاستشارة */}
               <div className="form-section card mb-4">
                 <div className="card-header bg-primary text-white">
                   <h3 className="mb-0">تفاصيل الاستشارة القانونية</h3>
@@ -272,38 +272,38 @@ export default function Home() {
                   </div>
 
                   <div className="form-group mb-4">
-                    <label className="form-label">
-                      هل تم الرفع للجهات القضائية؟ <span className="required">*</span>
-                    </label>
-                    <div className="d-flex gap-4">
-                      {[
-                        ["نعم", "yes"],
-                        ["لا", "no"],
-                      ].map(([label, id]) => (
-                        <div key={id}>
-                          <input
-                            type="radio"
-                            name="sent_to_court"
-                            value={label}
-                            id={id}
-                            required
-                          />
-                          <label htmlFor={id} className="ms-1">
-                            {label}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+  <label className="form-label">
+    هل تم الرفع للجهات القضائية؟ <span className="required">*</span>
+  </label>
+  <div className="d-flex gap-4">
+    {[
+      ["نعم", "1"],
+      ["لا", "0"],
+    ].map(([label, value]) => (
+      <div key={value}>
+        <input
+          type="radio"
+          name="sent_to_court"
+          value={value}
+          id={`sent_to_court_${value}`}
+          required
+        />
+        <label htmlFor={`sent_to_court_${value}`} className="ms-1">
+          {label}
+        </label>
+      </div>
+    ))}
+  </div>
+</div>
+
 
                   <div className="form-group mb-4">
                     <label className="form-label">
-                      إرفاق المستندات القانونية{" "}
-                      <span className="text-muted">(اختياري)</span>
+                      إرفاق المستندات القانونية <span className="text-muted">(اختياري)</span>
                     </label>
                     <input
                       type="file"
-                      name="legal-documents"
+                      name="documents[]"
                       className="form-control"
                       multiple
                       accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
@@ -324,15 +324,13 @@ export default function Home() {
                       required
                       placeholder="يرجى كتابة تفاصيل الاستشارة القانونية بشكل واضح ومفصل..."
                     ></textarea>
-                    <small className="form-text text-muted">
-                      كلما كانت التفاصيل أكثر وضوحاً، كانت الاستشارة أكثر دقة
-                    </small>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
+          {/* زر الإرسال */}
           <div className="submit-container text-center mt-5">
             <button type="submit" className="btn btn-primary btn-lg px-5">
               <i className="fas fa-paper-plane me-2"></i> تقديم طلب الاستشارة
