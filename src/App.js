@@ -9,11 +9,14 @@ import {
 // ✅ Navbars
 import Navbar from "./components/Navbar/Navbar";
 import ReviewerNavbar from "./components/Reviewer/ReviewerNavbar";
+import LawyerNavbar from "./components/Lawyer/LawyerNavbar";
+import ApproverNavbar from "./components/Approver/ApproverNavbar";
 
 // ✅ General Pages
 import Home from "./components/Home/Home";
 import Login from "./components/Login/Login";
 import Dashboard from "./components/Dashboard/Dashboard";
+import NotFound from "./components/NotFound/NotFound"; // ✅ صفحة 404
 
 // ✅ Reviewer Pages
 import ReviewerDashboard from "./components/Reviewer/ReviewerDashboard";
@@ -21,10 +24,18 @@ import ReviewerConsultation from "./components/Reviewer/ReviewerConsultation";
 import ReviewerHistory from "./components/Reviewer/ReviewerHistory";
 import ReviewerViewHistory from "./components/Reviewer/ReviewerViewHistory";
 
-
-// ✅ Lawyer and Approver Dashboards
+// ✅ Lawyer Pages
 import LawyerDashboard from "./components/Lawyer/LawyerDashboard";
+import LawyerResponser from "./components/Lawyer/LawyerResponser";
+import LawyerHistory from "./components/Lawyer/LawyerHistory";
+
+
+// ✅ Approver Pages
 import ApproverDashboard from "./components/Approver/ApproverDashboard";
+import ApproveResponse from "./components/Approver/ApproveResponse";
+
+// ✅ Auth
+import ProtectedRoute from "./components/Auth/ProtectedRoute";
 
 // ✅ FontAwesome Icons
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -40,7 +51,6 @@ import {
   faUserShield,
 } from "@fortawesome/free-solid-svg-icons";
 
-// ✅ Add icons to library
 library.add(
   faPhone,
   faHome,
@@ -55,36 +65,122 @@ library.add(
 // ✅ Layout component with dynamic navbar
 function Layout() {
   const location = useLocation();
+  const path = location.pathname;
 
-  const isReviewerPath =
-    location.pathname.startsWith("/reviewer") ||
-    location.pathname.startsWith("/reviewer-dashboard");
+  let NavbarComponent = Navbar;
+  if (path.startsWith("/reviewer")) NavbarComponent = ReviewerNavbar;
+  else if (path.startsWith("/lawyer")) NavbarComponent = LawyerNavbar;
+  else if (path.startsWith("/approver")) NavbarComponent = ApproverNavbar;
 
   return (
     <>
-      {/* Show reviewer navbar if on reviewer routes */}
-      {isReviewerPath ? <ReviewerNavbar /> : <Navbar />}
+      <NavbarComponent />
 
       <Routes>
-        {/* General pages */}
+        {/* ✅ Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
 
-        {/* Reviewer pages */}
-        <Route path="/reviewer/dashboard" element={<ReviewerDashboard />} />
+        {/* ✅ Shared Dashboard */}
+        {/* ✅ Lawyer Routes */}
+<Route
+  path="/lawyer/dashboard"
+  element={
+    <ProtectedRoute allowedRoles={["lawyer"]}>
+      <LawyerDashboard />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/lawyer/respond/:id"
+  element={
+    <ProtectedRoute allowedRoles={["lawyer"]}>
+      <LawyerResponser />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/lawyer/history"
+  element={
+    <ProtectedRoute allowedRoles={["lawyer"]}>
+      <LawyerHistory />
+    </ProtectedRoute>
+  }
+/>
+
+
+        {/* ✅ Reviewer Routes */}
+        <Route
+          path="/reviewer/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["reviewer"]}>
+              <ReviewerDashboard />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/reviewer/consultation/:id"
-          element={<ReviewerConsultation />}
+          element={
+            <ProtectedRoute allowedRoles={["reviewer"]}>
+              <ReviewerConsultation />
+            </ProtectedRoute>
+          }
         />
-        <Route path="/reviewer/history" element={<ReviewerHistory />} />
-        <Route path="/reviewer/history/:id" element={<ReviewerViewHistory />} />
+        <Route
+          path="/reviewer/history"
+          element={
+            <ProtectedRoute allowedRoles={["reviewer"]}>
+              <ReviewerHistory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reviewer/history/:id"
+          element={
+            <ProtectedRoute allowedRoles={["reviewer"]}>
+              <ReviewerViewHistory />
+            </ProtectedRoute>
+          }
+        />
 
+        {/* ✅ Lawyer Routes */}
+        <Route
+          path="/lawyer/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["lawyer"]}>
+              <LawyerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/lawyer/respond/:id"
+          element={
+            <ProtectedRoute allowedRoles={["lawyer"]}>
+              <LawyerResponser />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* Role-based dashboards */}
-        <Route path="/reviewer-dashboard" element={<ReviewerDashboard />} />
-        <Route path="/lawyer-dashboard" element={<LawyerDashboard />} />
-        <Route path="/approver-dashboard" element={<ApproverDashboard />} />
+        {/* ✅ Approver Routes */}
+        <Route
+          path="/approver/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["approver"]}>
+              <ApproverDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/approver/response/:id"
+          element={
+            <ProtectedRoute allowedRoles={["approver"]}>
+              <ApproveResponse />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ✅ Catch-all (404) */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );

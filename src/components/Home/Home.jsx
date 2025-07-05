@@ -12,7 +12,7 @@ export default function Home() {
 
     try {
       const response = await fetch(
-        "https://stellarwebsocket.shop/Estshara/public/api/estshara",
+        "https://stellarwebsocket.shop/api/estshara",
         {
           method: "POST",
           body: formData,

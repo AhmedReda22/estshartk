@@ -13,7 +13,7 @@ export default function ReviewerViewHistory() {
     const fetchConsultation = async () => {
       try {
         const response = await fetch(
-          `https://stellarwebsocket.shop/Estshara/public/api/estshara/${id}`
+          `https://stellarwebsocket.shop/api/estshara/${id}`
         );
         const data = await response.json();
 

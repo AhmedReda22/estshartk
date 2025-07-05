@@ -1,74 +1,89 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Login() {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: ""
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user?.role) {
+      switch (user.role) {
+        case "admin":
+          navigate("/dashboard", { replace: true });
+          break;
+        case "reviewer":
+          navigate("/reviewer/dashboard", { replace: true });
+          break;
+        case "lawyer":
+          navigate("/lawyer/dashboard", { replace: true });
+          break;
+        case "approver":
+          navigate("/approver/dashboard", { replace: true });
+          break;
+        default:
+          break;
+      }
+    }
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
+    setLoading(true);
 
     try {
-      const response = await fetch("https://stellarwebsocket.shop/Estshara/public/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData)
-      });
+      const response = await axios.post(
+        "https://stellarwebsocket.shop/api/auth/login",
+        formData,
+        { headers: { "Content-Type": "application/json" } }
+      );
 
-      const contentType = response.headers.get("content-type");
-      let data;
+      const userData = response.data?.data?.user;
+      const token = response.data?.data?.token;
+      const role = userData?.role;
 
-      if (contentType && contentType.includes("application/json")) {
-        data = await response.json();
-      } else {
-        throw new Error("تعذر تسجيل الدخول. يرجى التحقق من صحة البريد الإلكتروني وكلمة المرور والمحاولة مرة أخرى.");
+      if (!token || !role) {
+        throw new Error("بيانات غير صالحة من الخادم.");
       }
 
-      if (!response.ok) {
-        throw new Error(data?.message || "فشل في تسجيل الدخول. الرجاء التحقق من البريد الإلكتروني أو كلمة المرور.");
-      }
+      const user = {
+        role,
+        name: userData.name,
+        email: userData.email,
+        token,
+      };
 
-      const role = data?.data?.user?.role;
-
-      // Optional: Save token/user info here if needed
-      // localStorage.setItem("token", data.data.token);
+      localStorage.setItem("user", JSON.stringify(user));
 
       switch (role) {
         case "admin":
-          navigate("/dashboard");
+          navigate("/dashboard", { replace: true });
           break;
         case "reviewer":
-          navigate("/reviewer-dashboard");
+          navigate("/reviewer/dashboard", { replace: true });
           break;
         case "lawyer":
-          navigate("/lawyer-dashboard");
+          navigate("/lawyer/dashboard", { replace: true });
           break;
         case "approver":
-          navigate("/approver-dashboard");
+          navigate("/approver/dashboard", { replace: true });
           break;
         default:
-          throw new Error("الدور غير معروف. يرجى التواصل مع الإدارة.");
+          throw new Error("الدور غير معروف. يُرجى التواصل مع الإدارة.");
       }
-
     } catch (err) {
-      setError(err.message || "حدث خطأ أثناء محاولة تسجيل الدخول. الرجاء المحاولة لاحقًا.");
+      setError(
+        err?.response?.data?.message || err.message || "فشل تسجيل الدخول."
+      );
     } finally {
       setLoading(false);
     }
@@ -76,33 +91,48 @@ export default function Login() {
 
   return (
     <div className="login-page">
-      {/* Information Section */}
+      {/* معلومات المستخدم */}
       <div className="login-info-section">
         <div className="login-info-container">
           <h2 className="login-info-title">من يمكنه تسجيل الدخول هنا؟</h2>
           <div className="login-info-content">
             <div className="login-info-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
               </svg>
             </div>
             <div className="login-info-text">
-              <p className="login-info-main">هذه الصفحة مخصصة حصريًا لأعضاء الفريق المعتمدين فقط:</p>
+              <p className="login-info-main">
+                هذه الصفحة مخصصة لأعضاء الفريق فقط:
+              </p>
               <ul className="login-info-roles">
-                <li><span className="role-badge">المشرفين</span> (الإداريين)</li>
-                <li><span className="role-badge">المدققين</span></li>
-                <li><span className="role-badge">المحامين</span></li>
-                <li><span className="role-badge">مراجعين معتمدين</span></li>
+                <li>
+                  <span className="role-badge">المشرفين</span>
+                </li>
+                <li>
+                  <span className="role-badge">المدققين</span>
+                </li>
+                <li>
+                  <span className="role-badge">المحامين</span>
+                </li>
+                <li>
+                  <span className="role-badge">المراجعين المعتمدين</span>
+                </li>
               </ul>
               <p className="login-info-note">
-                إذا كنت مستخدمًا عاديًا، فلا داعي لتسجيل الدخول هنا. يمكنك متابعة استخدام الخدمات العامة دون الحاجة إلى حساب.
+                إذا لم تكن ضمن الفريق، يمكنك استخدام الخدمات العامة بدون تسجيل
+                دخول.
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Login Form Section */}
+      {/* نموذج تسجيل الدخول */}
       <div className="login-form-container">
         <h1 className="login-title">تسجيل الدخول</h1>
 
@@ -150,7 +180,9 @@ export default function Login() {
               <input type="checkbox" id="remember" name="remember" />
               <label htmlFor="remember">تذكرني</label>
             </div>
-            <a href="#forgot-password" className="forgot-password">نسيت كلمة المرور؟</a>
+            <a href="#forgot-password" className="forgot-password">
+              نسيت كلمة المرور؟
+            </a>
           </div>
 
           <button type="submit" className="login-button" disabled={loading}>
@@ -159,7 +191,7 @@ export default function Login() {
         </form>
       </div>
 
-      {/* Styles */}
+      {/* CSS Styles */}
       <style jsx>{`
         .login-page {
           display: flex;

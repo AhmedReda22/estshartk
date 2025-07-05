@@ -18,7 +18,7 @@ export default function ReviewerConsultation() {
     const fetchConsultation = async () => {
       try {
         const response = await fetch(
-          `https://stellarwebsocket.shop/Estshara/public/api/estshara/${id}`
+          `https://stellarwebsocket.shop/api/estshara/${id}`
         );
         const data = await response.json();
         
@@ -47,7 +47,7 @@ export default function ReviewerConsultation() {
     const fetchLawyers = async () => {
       try {
         const response = await fetch(
-          "https://stellarwebsocket.shop/Estshara/public/api/users-lawyers"
+          "https://stellarwebsocket.shop/api/users-lawyers"
         );
         const result = await response.json();
         
@@ -91,7 +91,7 @@ export default function ReviewerConsultation() {
     console.log("Selected Lawyer Value Before Submit:", selectedLawyer);
 
       const response = await fetch(
-        `https://stellarwebsocket.shop/Estshara/public/api/estshara-inv-update/${id}`,
+        `https://stellarwebsocket.shop/api/estshara-inv-update/${id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -134,7 +134,7 @@ export default function ReviewerConsultation() {
 
     try {
       const response = await fetch(
-        `https://stellarwebsocket.shop/Estshara/public/api/estshara-inv-update/${id}`,
+        `https://stellarwebsocket.shop/api/estshara-inv-update/${id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },

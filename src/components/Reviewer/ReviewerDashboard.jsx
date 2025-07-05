@@ -11,7 +11,7 @@ export default function ReviewerDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("https://stellarwebsocket.shop/Estshara/public/api/estshara-created")
+    fetch("https://stellarwebsocket.shop/api/estshara-created")
       .then((res) => res.json())
       .then((result) => {
         if (result.status === "success" && Array.isArray(result.data)) {
