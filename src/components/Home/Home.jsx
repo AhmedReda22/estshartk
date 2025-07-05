@@ -1,25 +1,73 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
 export default function Home() {
+  const fileInputRef = useRef();
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const input = fileInputRef.current;
+    if (!input) return;
+
+    const handleFileChange = (e) => {
+      const files = e.target.files;
+      if (files.length > 3) {
+        Swal.fire({
+          icon: "warning",
+          title: "عدد الملفات كبير",
+          text: "الحد الأقصى لعدد الملفات هو 3.",
+        });
+        input.value = "";
+      }
+    };
+
+    input.addEventListener("change", handleFileChange);
+    return () => input.removeEventListener("change", handleFileChange);
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     const form = e.target;
     const formData = new FormData(form);
 
+    const filesInput = form.querySelector('input[name="documents[]"]');
+    const files = filesInput?.files || [];
+    const maxFiles = 3;
+    const maxFileSizeInBytes = 5 * 1024 * 1024 * 1024; // 5GB
+
+    if (files.length > maxFiles) {
+      Swal.fire({
+        icon: "error",
+        title: "عدد الملفات كبير",
+        text: `الحد الأقصى لعدد الملفات هو ${maxFiles}.`,
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    for (let file of files) {
+      if (file.size > maxFileSizeInBytes) {
+        Swal.fire({
+          icon: "error",
+          title: "حجم الملف كبير",
+          text: `الحد الأقصى لحجم كل ملف هو 5 جيجابايت.`,
+        });
+        setIsLoading(false);
+        return;
+      }
+    }
+
     console.log("Submitting form data:", Object.fromEntries(formData.entries()));
 
     try {
-      const response = await fetch(
-        "https://stellarwebsocket.shop/api/estshara",
-        {
-          method: "POST",
-          body: formData,
-          mode: "cors",
-        }
-      );
-console.log("Response:", response);
+      const response = await fetch("https://stellarwebsocket.shop/api/estshara", {
+        method: "POST",
+        body: formData,
+        mode: "cors",
+      });
+      console.log("Response:", response);
       if (response.ok) {
         Swal.fire({
           icon: "success",
@@ -43,6 +91,8 @@ console.log("Response:", response);
         title: "تعذر الاتصال بالخادم",
         text: "يرجى التحقق من الاتصال أو المحاولة لاحقاً.",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -272,30 +322,29 @@ console.log("Response:", response);
                   </div>
 
                   <div className="form-group mb-4">
-  <label className="form-label">
-    هل تم الرفع للجهات القضائية؟ <span className="required">*</span>
-  </label>
-  <div className="d-flex gap-4">
-    {[
-      ["نعم", "1"],
-      ["لا", "0"],
-    ].map(([label, value]) => (
-      <div key={value}>
-        <input
-          type="radio"
-          name="sent_to_court"
-          value={value}
-          id={`sent_to_court_${value}`}
-          required
-        />
-        <label htmlFor={`sent_to_court_${value}`} className="ms-1">
-          {label}
-        </label>
-      </div>
-    ))}
-  </div>
-</div>
-
+                    <label className="form-label">
+                      هل تم الرفع للجهات القضائية؟ <span className="required">*</span>
+                    </label>
+                    <div className="d-flex gap-4">
+                      {[
+                        ["نعم", "1"],
+                        ["لا", "0"],
+                      ].map(([label, value]) => (
+                        <div key={value}>
+                          <input
+                            type="radio"
+                            name="sent_to_court"
+                            value={value}
+                            id={`sent_to_court_${value}`}
+                            required
+                          />
+                          <label htmlFor={`sent_to_court_${value}`} className="ms-1">
+                            {label}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
                   <div className="form-group mb-4">
                     <label className="form-label">
@@ -307,6 +356,7 @@ console.log("Response:", response);
                       className="form-control"
                       multiple
                       accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                      ref={fileInputRef}
                     />
                     <small className="form-text text-muted">
                       يمكنك رفع ملفات PDF، Word، أو صور للمستندات المتعلقة بالقضية
@@ -332,9 +382,15 @@ console.log("Response:", response);
 
           {/* زر الإرسال */}
           <div className="submit-container text-center mt-5">
-            <button type="submit" className="btn btn-primary btn-lg px-5">
-              <i className="fas fa-paper-plane me-2"></i> تقديم طلب الاستشارة
-            </button>
+            {isLoading ? (
+              <button className="btn btn-secondary btn-lg px-5" disabled>
+                <i className="fas fa-spinner fa-spin me-2"></i> جاري الإرسال...
+              </button>
+            ) : (
+              <button type="submit" className="btn btn-primary btn-lg px-5">
+                <i className="fas fa-paper-plane me-2"></i> تقديم طلب الاستشارة
+              </button>
+            )}
             <p className="text-muted mt-3">
               سيتم مراجعة طلبك والرد عليك خلال 3 أيام عمل
             </p>
