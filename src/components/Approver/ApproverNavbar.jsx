@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCheckDouble,
+  faShieldAlt,
   faUserShield,
   faBars,
   faTimes,
+  faTachometerAlt,
+  faHistory,
+  faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
@@ -22,7 +25,6 @@ export default function ApproverNavbar() {
     sessionStorage.removeItem("token");
     localStorage.removeItem("user");
     sessionStorage.removeItem("user");
-
     closeMenu();
     navigate("/login");
   };
@@ -39,13 +41,13 @@ export default function ApproverNavbar() {
             </Link>
           </div>
 
-          {/* Role Text */}
+          {/* Role Label */}
           <div className="d-none d-sm-block text-muted fw-bold">
             <FontAwesomeIcon icon={faUserShield} className="me-2 text-primary" />
             أنت الآن في لوحة المعتمد
           </div>
 
-          {/* Toggle */}
+          {/* Toggle Button */}
           <button
             className="navbar-toggler order-2 d-lg-none border-0"
             onClick={toggleMenu}
@@ -65,23 +67,34 @@ export default function ApproverNavbar() {
               <li className="nav-item mx-2">
                 <Link
                   to="/approver/dashboard"
-                  className={`nav-link d-flex flex-column align-items-center ${
-                    location.pathname === "/approver/dashboard" ? "active" : ""
-                  }`}
+                  className={`nav-link d-flex flex-column align-items-center ${location.pathname === "/approver/dashboard" ? "active" : ""}`}
                   onClick={closeMenu}
                 >
-                  <FontAwesomeIcon icon={faCheckDouble} className="mb-1" />
-                  مراجعة الردود
+                  <FontAwesomeIcon icon={faTachometerAlt} className="mb-1" />
+                  لوحة التحكم
+                </Link>
+              </li>
+
+              {/* History */}
+              <li className="nav-item mx-2">
+                <Link
+                  to="/approver/history"
+                  className={`nav-link d-flex flex-column align-items-center ${location.pathname === "/approver/history" ? "active" : ""}`}
+                  onClick={closeMenu}
+                >
+                  <FontAwesomeIcon icon={faHistory} className="mb-1" />
+                  سجل الموافقات
                 </Link>
               </li>
 
               {/* Logout */}
               <li className="nav-item mx-2">
                 <button
-                  className="nav-link d-flex flex-column align-items-center btn btn-link p-0 text-white"
                   onClick={handleLogout}
+                  className="nav-link d-flex flex-column align-items-center text-white border-0 bg-transparent logout-btn"
+                  style={{ padding: "0.5rem 1rem", cursor: "pointer" }}
                 >
-                  <FontAwesomeIcon icon={faUserShield} className="mb-1" />
+                  <FontAwesomeIcon icon={faSignOutAlt} className="mb-1" />
                   تسجيل الخروج
                 </button>
               </li>
@@ -90,7 +103,7 @@ export default function ApproverNavbar() {
         </div>
       </nav>
 
-      {/* Mobile Style */}
+      {/* Responsive Styles */}
       <style jsx>{`
         @media (max-width: 575.98px) {
           .navbar-nav {

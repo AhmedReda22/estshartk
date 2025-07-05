@@ -19,10 +19,9 @@ export default function ReviewerNavbar() {
   const closeMenu = () => setIsMenuOpen(false);
 
   const handleLogout = () => {
-    // 🔐 حذف بيانات تسجيل الدخول
     localStorage.removeItem("token");
     sessionStorage.removeItem("token");
-    localStorage.removeItem("user"); // إذا كنت تخزن معلومات المستخدم
+    localStorage.removeItem("user");
     sessionStorage.removeItem("user");
 
     closeMenu();
@@ -31,23 +30,20 @@ export default function ReviewerNavbar() {
 
   return (
     <div className="arabic-navbar">
-      {/* Top Logo Bar */}
+      {/* ✅ Top Logo Bar */}
       <div className="top-bar py-2 bg-light border-bottom">
         <div className="container d-flex justify-content-between align-items-center flex-wrap">
-          {/* Logo */}
           <div className="logo-container order-1 order-lg-0">
             <Link to="/reviewer/dashboard" onClick={closeMenu}>
               <img src={logo} alt="Logo" style={{ height: "50px" }} />
             </Link>
           </div>
 
-          {/* Role indicator (مراجع) */}
           <div className="d-none d-sm-block text-muted fw-bold">
             <FontAwesomeIcon icon={faUserShield} className="me-2 text-primary" />
             أنت الآن في لوحة المراجع
           </div>
 
-          {/* Menu Toggle for Mobile */}
           <button
             className="navbar-toggler order-2 d-lg-none border-0"
             onClick={toggleMenu}
@@ -58,7 +54,7 @@ export default function ReviewerNavbar() {
         </div>
       </div>
 
-      {/* Main Navigation */}
+      {/* ✅ Main Navigation */}
       <nav
         className="main-nav navbar navbar-expand-lg navbar-dark"
         style={{ backgroundColor: "#2c3e50" }}
@@ -97,8 +93,9 @@ export default function ReviewerNavbar() {
               {/* Logout */}
               <li className="nav-item mx-2">
                 <button
-                  className="nav-link d-flex flex-column align-items-center btn btn-link p-0 text-white"
                   onClick={handleLogout}
+                  className="nav-link d-flex flex-column align-items-center text-white bg-transparent border-0 logout-btn"
+                  style={{ padding: "0.75rem 0.5rem", cursor: "pointer" }}
                 >
                   <FontAwesomeIcon icon={faUserShield} className="mb-1" />
                   تسجيل الخروج
@@ -109,30 +106,50 @@ export default function ReviewerNavbar() {
         </div>
       </nav>
 
-      {/* Responsive Styles */}
+      {/* ✅ Responsive Styles */}
       <style jsx>{`
-        @media (max-width: 575.98px) {
-          .navbar-nav {
-            padding: 0.5rem 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            align-items: center;
-          }
+  .navbar-nav {
+    flex-direction: column !important;
+    align-items: center;
+    width: 100%;
+  }
 
-          .nav-item {
-            width: 100%;
-            text-align: center;
-          }
+  .nav-item {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
 
-          .nav-link {
-            padding: 0.75rem 0.5rem !important;
-            font-size: 0.9rem !important;
-            background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 0.25rem;
-          }
-        }
-      `}</style>
+  .nav-link,
+  .logout-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.75rem 0.5rem;
+    border-radius: 0.25rem;
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+  }
+
+  .nav-link:hover,
+  .logout-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: background-color 0.2s ease;
+  }
+
+  @media (min-width: 768px) {
+    .navbar-nav {
+      flex-direction: row !important;
+      justify-content: center;
+    }
+
+    .nav-item {
+      width: auto;
+      margin: 0 0.5rem;
+    }
+  }
+`}</style>
+
     </div>
   );
 }

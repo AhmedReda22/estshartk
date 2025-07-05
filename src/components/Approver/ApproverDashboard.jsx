@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "animate.css";
 
@@ -11,20 +12,37 @@ export default function ApproverDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("https://stellarwebsocket.shop/api/pending-approval")
-      .then((res) => res.json())
-      .then((result) => {
-        if (result.status === "success" && Array.isArray(result.data)) {
-          setPending(result.data);
-        }
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("خطأ:", error);
-        setLoading(false);
-      });
-  }, []);
+  const token = JSON.parse(localStorage.getItem('user') || '{}')?.token;
 
+if (token) {
+  console.log('Token:', token);
+} else {
+  console.warn('Token not found.');
+}
+
+  axios
+    .get("https://stellarwebsocket.shop/api/estshara-approver", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+      },
+    })
+    .then((res) => {
+      const result = res.data;
+      if (result.status === "success" && Array.isArray(result.data)) {
+        setPending(result.data);
+      }
+      setLoading(false);
+    })
+    .catch((error) => {
+      console.error("خطأ في جلب البيانات:", error);
+      setLoading(false);
+    });
+}, []);
+
+
+
+  // تقسيم الردود إلى صفوف كل صف يحتوي على عنصرين
   const rows = [];
   for (let i = 0; i < pending.length; i += 2) {
     rows.push(pending.slice(i, i + 2));

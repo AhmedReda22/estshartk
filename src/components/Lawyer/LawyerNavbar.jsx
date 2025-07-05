@@ -6,6 +6,8 @@ import {
   faBars,
   faTimes,
   faTachometerAlt,
+  faHistory,
+  faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
@@ -63,13 +65,11 @@ export default function LawyerNavbar() {
           <div className={`collapse navbar-collapse ${isMenuOpen ? "show" : ""}`}>
             <ul className="navbar-nav mx-auto text-center">
 
-              {/* Lawyer Dashboard */}
+              {/* Dashboard */}
               <li className="nav-item mx-2">
                 <Link
                   to="/lawyer/dashboard"
-                  className={`nav-link d-flex flex-column align-items-center ${
-                    location.pathname === "/lawyer/dashboard" ? "active" : ""
-                  }`}
+                  className={`nav-link d-flex flex-column align-items-center ${location.pathname === "/lawyer/dashboard" ? "active" : ""}`}
                   onClick={closeMenu}
                 >
                   <FontAwesomeIcon icon={faTachometerAlt} className="mb-1" />
@@ -77,29 +77,30 @@ export default function LawyerNavbar() {
                 </Link>
               </li>
 
-              {/* My Consultations */}
+              {/* History */}
               <li className="nav-item mx-2">
                 <Link
-                  to="/lawyer/my-consultations"
-                  className={`nav-link d-flex flex-column align-items-center ${
-                    location.pathname === "/lawyer/my-consultations" ? "active" : ""
-                  }`}
+                  to="/lawyer/history"
+                  className={`nav-link d-flex flex-column align-items-center ${location.pathname === "/lawyer/history" ? "active" : ""}`}
                   onClick={closeMenu}
                 >
-                  <FontAwesomeIcon icon={faBriefcase} className="mb-1" />
-                  استشاراتي
+                  <FontAwesomeIcon icon={faHistory} className="mb-1" />
+                  السجل
                 </Link>
               </li>
 
               {/* Logout */}
               <li className="nav-item mx-2">
                 <button
-                  className="nav-link d-flex flex-column align-items-center btn btn-link p-0 text-white"
-                  onClick={handleLogout}
-                >
-                  <FontAwesomeIcon icon={faUserTie} className="mb-1" />
-                  تسجيل الخروج
-                </button>
+  onClick={handleLogout}
+  className="nav-link d-flex flex-column align-items-center text-white border-0 bg-transparent logout-btn"
+  style={{ padding: "0.5rem 1rem", cursor: "pointer" }}
+>
+  <FontAwesomeIcon icon={faSignOutAlt} className="mb-1" />
+  تسجيل الخروج
+</button>
+
+
               </li>
             </ul>
           </div>

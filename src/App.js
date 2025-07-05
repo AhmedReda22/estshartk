@@ -16,7 +16,7 @@ import ApproverNavbar from "./components/Approver/ApproverNavbar";
 import Home from "./components/Home/Home";
 import Login from "./components/Login/Login";
 import Dashboard from "./components/Dashboard/Dashboard";
-import NotFound from "./components/NotFound/NotFound"; // ✅ صفحة 404
+import NotFound from "./components/NotFound/NotFound";
 
 // ✅ Reviewer Pages
 import ReviewerDashboard from "./components/Reviewer/ReviewerDashboard";
@@ -28,11 +28,13 @@ import ReviewerViewHistory from "./components/Reviewer/ReviewerViewHistory";
 import LawyerDashboard from "./components/Lawyer/LawyerDashboard";
 import LawyerResponser from "./components/Lawyer/LawyerResponser";
 import LawyerHistory from "./components/Lawyer/LawyerHistory";
-
+import LawyerViewHistory from "./components/Lawyer/LawyerViewHistory";
 
 // ✅ Approver Pages
 import ApproverDashboard from "./components/Approver/ApproverDashboard";
 import ApproveResponse from "./components/Approver/ApproveResponse";
+import ApproverHistory from "./components/Approver/ApproverHistory"; // ✅ جديد
+import ApproverViewHistory from "./components/Approver/ApproverViewHistory"; // ✅ جديد
 
 // ✅ Auth
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
@@ -81,33 +83,39 @@ function Layout() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
 
-        {/* ✅ Shared Dashboard */}
         {/* ✅ Lawyer Routes */}
-<Route
-  path="/lawyer/dashboard"
-  element={
-    <ProtectedRoute allowedRoles={["lawyer"]}>
-      <LawyerDashboard />
-    </ProtectedRoute>
-  }
-/>
-<Route
-  path="/lawyer/respond/:id"
-  element={
-    <ProtectedRoute allowedRoles={["lawyer"]}>
-      <LawyerResponser />
-    </ProtectedRoute>
-  }
-/>
-<Route
-  path="/lawyer/history"
-  element={
-    <ProtectedRoute allowedRoles={["lawyer"]}>
-      <LawyerHistory />
-    </ProtectedRoute>
-  }
-/>
-
+        <Route
+          path="/lawyer/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["lawyer"]}>
+              <LawyerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/lawyer/respond/:id"
+          element={
+            <ProtectedRoute allowedRoles={["lawyer"]}>
+              <LawyerResponser />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/lawyer/history"
+          element={
+            <ProtectedRoute allowedRoles={["lawyer"]}>
+              <LawyerHistory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/lawyer/view-history/:id"
+          element={
+            <ProtectedRoute allowedRoles={["lawyer"]}>
+              <LawyerViewHistory />
+            </ProtectedRoute>
+          }
+        />
 
         {/* ✅ Reviewer Routes */}
         <Route
@@ -143,24 +151,6 @@ function Layout() {
           }
         />
 
-        {/* ✅ Lawyer Routes */}
-        <Route
-          path="/lawyer/dashboard"
-          element={
-            <ProtectedRoute allowedRoles={["lawyer"]}>
-              <LawyerDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/lawyer/respond/:id"
-          element={
-            <ProtectedRoute allowedRoles={["lawyer"]}>
-              <LawyerResponser />
-            </ProtectedRoute>
-          }
-        />
-
         {/* ✅ Approver Routes */}
         <Route
           path="/approver/dashboard"
@@ -175,6 +165,22 @@ function Layout() {
           element={
             <ProtectedRoute allowedRoles={["approver"]}>
               <ApproveResponse />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/approver/history"
+          element={
+            <ProtectedRoute allowedRoles={["approver"]}>
+              <ApproverHistory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/approver/history/:id"
+          element={
+            <ProtectedRoute allowedRoles={["approver"]}>
+              <ApproverViewHistory />
             </ProtectedRoute>
           }
         />

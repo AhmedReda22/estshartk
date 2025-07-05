@@ -38,7 +38,6 @@ export default function ApproverHistory() {
       });
   }, [token]);
 
-  // تصفية البيانات حسب الحالة
   const filteredHistory =
     filter === "all"
       ? history
@@ -48,16 +47,16 @@ export default function ApproverHistory() {
     <div className="container py-5" dir="rtl">
       {/* العنوان */}
       <div className="text-center mb-4 d-flex justify-content-center align-items-center gap-2">
-        <span className="fs-3">📜</span>
+        <span className="fs-3">📝</span>
         <h1 className="display-5 animate__animated animate__fadeInDown m-0 fw-bold"
           style={{
-            background: 'linear-gradient(to right, #2c3e50, #27ae60, #2c3e50)',
+            background: 'linear-gradient(to right, #2c3e50, #3498db, #2c3e50)',
             WebkitBackgroundClip: 'text',
             backgroundClip: 'text',
             color: 'transparent'
           }}
         >
-          سجل الموافقات السابقة
+          سجل الردود السابقة
         </h1>
       </div>
 
@@ -83,18 +82,20 @@ export default function ApproverHistory() {
         </button>
       </div>
 
-      {/* تحميل أو عرض البيانات */}
+      {/* عرض البيانات */}
       {loading ? (
         <div className="alert alert-info text-center">جاري تحميل السجل...</div>
       ) : filteredHistory.length === 0 ? (
-        <div className="alert alert-warning text-center">لا يوجد نتائج مطابقة للفئة المحددة.</div>
+        <div className="alert alert-warning text-center">لا توجد ردود حالياً.</div>
       ) : (
         <div className="row g-4">
           {filteredHistory.map((item, index) => (
             <div key={index} className="col-md-6">
               <div className="card shadow-sm border-0 h-100 animate__animated animate__fadeInUp">
-                <div className={`card-header text-white fw-bold ${item.status?.approver_status === 'approved' ? 'bg-success' : 'bg-danger'}`}>
-                  {item.status?.approver_status === 'approved' ? '✅ تمت الموافقة' : '❌ تم الرفض'} - {item.full_name}
+                <div className={`card-header fw-bold text-white ${item.status?.approver_status === 'approved' ? 'bg-success' : 'bg-danger'}`}>
+                  {item.status?.approver_status === 'approved'
+                    ? '✅ تمت الموافقة - ' + item.full_name
+                    : '❌ تم الرفض - ' + item.full_name}
                 </div>
                 <div className="card-body">
                   <p className="card-text text-secondary mb-2">
@@ -102,14 +103,15 @@ export default function ApproverHistory() {
                       ? item.text.slice(0, 150) + "..."
                       : item.text}
                   </p>
-                  <p className="text-muted small mb-0">
+                  <p className="text-muted small mb-1">
                     📅 التاريخ:{" "}
                     {new Date(item.updated_at).toLocaleDateString("ar-EG")}
                   </p>
-                  {item.status?.approver_status === "rejected" && item.approver_rejection_reason && (
-                    <p className="text-danger mt-2">
-                      <strong>سبب الرفض:</strong> {item.approver_rejection_reason}
-                    </p>
+                  {item.status?.approver_status === "rejected" &&
+                    item.approver_rejection_reason && (
+                      <p className="text-danger small">
+                        <strong>سبب الرفض:</strong> {item.approver_rejection_reason}
+                      </p>
                   )}
                 </div>
               </div>

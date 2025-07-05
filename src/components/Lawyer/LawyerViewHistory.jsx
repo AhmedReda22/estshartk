@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "animate.css";
-import Swal from "sweetalert2";
 
-export default function ReviewerViewHistory() {
+export default function LawyerViewHistory() {
   const [consultation, setConsultation] = useState(null);
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
@@ -12,12 +12,10 @@ export default function ReviewerViewHistory() {
   useEffect(() => {
     const fetchConsultation = async () => {
       try {
-        const response = await fetch(
-          `https://stellarwebsocket.shop/api/estshara/${id}`
-        );
+        const response = await fetch(`https://stellarwebsocket.shop/api/estshara/${id}`);
         const data = await response.json();
 
-        if (response.ok) {
+        if (response.ok && data.status === "success") {
           setConsultation(data.data);
         } else {
           Swal.fire({
@@ -77,7 +75,7 @@ export default function ReviewerViewHistory() {
       <div className="card shadow-lg border-0 p-4">
         <div className="row g-3">
 
-          {/* البيانات الشخصية */}
+          {/* بيانات العميل */}
           {[
             { label: "الاسم الرباعي", value: consultation.full_name },
             { label: "الجنس", value: consultation.gender === "male" ? "ذكر" : "أنثى" },
@@ -92,8 +90,8 @@ export default function ReviewerViewHistory() {
             { label: "تصنيف الاستشارة القانونية", value: consultation.category },
             {
               label: "تم الرفع للجهات القضائية؟",
-              value: consultation.sent_to_court === "1" ? "نعم" : "لا"
-            }
+              value: consultation.sent_to_court === "1" ? "نعم" : "لا",
+            },
           ].map((field, idx) => (
             <div className="col-md-6" key={idx}>
               <label className="form-label fw-bold">{field.label}:</label>
@@ -117,7 +115,20 @@ export default function ReviewerViewHistory() {
             />
           </div>
 
-          {/* المستندات المرفقة */}
+          {/* الرد من المحامي إن وُجد */}
+          {consultation.lawyer_response && (
+            <div className="col-12">
+              <label className="form-label fw-bold text-success">رد المحامي:</label>
+              <textarea
+                className="form-control text-success"
+                value={consultation.lawyer_response}
+                rows="5"
+                disabled
+              />
+            </div>
+          )}
+
+          {/* المستندات */}
           {consultation.documents && consultation.documents.length > 0 && (
             <div className="col-12">
               <label className="form-label fw-bold">المستندات القانونية المرفقة:</label>
@@ -138,7 +149,7 @@ export default function ReviewerViewHistory() {
             </div>
           )}
 
-          {/* سبب الرفض إن وجد */}
+          {/* سبب الرفض إن وُجد */}
           {consultation.reviewer_status === "rejected" && consultation.reviewer_rejection_reason && (
             <div className="col-12">
               <label className="form-label fw-bold text-danger">سبب الرفض:</label>
@@ -150,7 +161,6 @@ export default function ReviewerViewHistory() {
               />
             </div>
           )}
-
         </div>
       </div>
     </div>

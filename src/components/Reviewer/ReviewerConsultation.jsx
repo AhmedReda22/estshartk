@@ -91,12 +91,12 @@ export default function ReviewerConsultation() {
     console.log("Selected Lawyer Value Before Submit:", selectedLawyer);
 
       const response = await fetch(
-        `https://stellarwebsocket.shop/api/estshara-inv-update/${id}`,
+        `https://stellarwebsocket.shop/api/estshara-reviewer-update/${id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: new URLSearchParams({
-  inv_status: "approved",
+  reviewer_status: "approved",
   user_id: selectedLawyer?.toString(),
 }),
         }
@@ -134,14 +134,14 @@ export default function ReviewerConsultation() {
 
     try {
       const response = await fetch(
-        `https://stellarwebsocket.shop/api/estshara-inv-update/${id}`,
+        `https://stellarwebsocket.shop/api/estshara-reviewer-update/${id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: new URLSearchParams({
-            inv_status: "rejected",
+            reviewer_status: "rejected",
             user_id: "3", // Assuming this is the reviewer's ID
-            inv_rejection_reason: rejectionReason,
+            reviewer_rejection_reason: rejectionReason,
           }),
         }
       );
