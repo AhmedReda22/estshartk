@@ -13,7 +13,7 @@ export default function Login() {
     if (user?.role) {
       switch (user.role) {
         case "admin":
-          navigate("/dashboard", { replace: true });
+          navigate("/admin/dashboard", { replace: true });
           break;
         case "reviewer":
           navigate("/reviewer/dashboard", { replace: true });
@@ -28,7 +28,7 @@ export default function Login() {
           break;
       }
     }
-  }, []);
+  }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -66,7 +66,7 @@ export default function Login() {
 
       switch (role) {
         case "admin":
-          navigate("/dashboard", { replace: true });
+          navigate("/admin/dashboard", { replace: true });
           break;
         case "reviewer":
           navigate("/reviewer/dashboard", { replace: true });
@@ -97,35 +97,20 @@ export default function Login() {
           <h2 className="login-info-title">من يمكنه تسجيل الدخول هنا؟</h2>
           <div className="login-info-content">
             <div className="login-info-icon">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
               </svg>
             </div>
             <div className="login-info-text">
-              <p className="login-info-main">
-                هذه الصفحة مخصصة لأعضاء الفريق فقط:
-              </p>
+              <p className="login-info-main">هذه الصفحة مخصصة لأعضاء الفريق فقط:</p>
               <ul className="login-info-roles">
-                <li>
-                  <span className="role-badge">المشرفين</span>
-                </li>
-                <li>
-                  <span className="role-badge">المدققين</span>
-                </li>
-                <li>
-                  <span className="role-badge">المحامين</span>
-                </li>
-                <li>
-                  <span className="role-badge">المراجعين المعتمدين</span>
-                </li>
+                <li><span className="role-badge">المشرفين</span></li>
+                <li><span className="role-badge">المدققين</span></li>
+                <li><span className="role-badge">المحامين</span></li>
+                <li><span className="role-badge">المراجعين المعتمدين</span></li>
               </ul>
               <p className="login-info-note">
-                إذا لم تكن ضمن الفريق، يمكنك استخدام الخدمات العامة بدون تسجيل
-                دخول.
+                إذا لم تكن ضمن الفريق، يمكنك استخدام الخدمات العامة بدون تسجيل دخول.
               </p>
             </div>
           </div>
@@ -180,9 +165,7 @@ export default function Login() {
               <input type="checkbox" id="remember" name="remember" />
               <label htmlFor="remember">تذكرني</label>
             </div>
-            <a href="#forgot-password" className="forgot-password">
-              نسيت كلمة المرور؟
-            </a>
+            <a href="#forgot-password" className="forgot-password">نسيت كلمة المرور؟</a>
           </div>
 
           <button type="submit" className="login-button" disabled={loading}>
@@ -191,7 +174,6 @@ export default function Login() {
         </form>
       </div>
 
-      {/* CSS Styles */}
       <style jsx>{`
         .login-page {
           display: flex;
