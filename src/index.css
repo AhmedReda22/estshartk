@@ -674,9 +674,9 @@ code {
 
 /* Base Styles */
 :root {
-  --primary: #6777ef;
-  --primary-light: #8a97f0;
-  --primary-dark: #4d5bda;
+  --primary: #2c3e50;
+  --primary-light: #344a5f;
+  --primary-dark: #243241;
   --secondary: #757575;
   --success: #66bb6a;
   --info: #3abaf4;
@@ -973,3 +973,41 @@ body {
   margin-right: 0;
   margin-left: 0.25rem;
 }
+
+
+
+/* يمكن إضافته في ملف CSS منفصل أو كـ styled-components */
+.icon-circle {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.border-left-primary { border-left-color: #4e73df !important; }
+.border-left-success { border-left-color: #1cc88a !important; }
+.border-left-info { border-left-color: #36b9cc !important; }
+.border-left-warning { border-left-color: #f6c23e !important; }
+.border-left-secondary { border-left-color: #858796 !important; }
+
+.bg-primary-light { background-color: #e0e6ff; }
+.bg-success-light { background-color: #d1f3e6; }
+.bg-info-light { background-color: #d6f5f9; }
+.bg-warning-light { background-color: #fef5d9; }
+.bg-secondary-light { background-color: #e3e6ea; }
+
+.text-primary { color: #4e73df !important; }
+.text-success { color: #1cc88a !important; }
+.text-info { color: #36b9cc !important; }
+.text-warning { color: #f6c23e !important; }
+.text-secondary { color: #858796 !important; }

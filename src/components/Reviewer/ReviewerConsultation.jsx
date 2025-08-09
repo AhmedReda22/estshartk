@@ -13,12 +13,23 @@ export default function ReviewerConsultation() {
   const navigate = useNavigate();
   const { id } = useParams();
 
+  // Get the authenticated user data from localStorage
+const authUser = JSON.parse(localStorage.getItem('user'));
+  // Get token from localStorage or wherever you store it
+  const token = authUser?.token || '';
+
   useEffect(() => {
-    // Fetch consultation details
+    // Fetch consultation details with auth header
     const fetchConsultation = async () => {
       try {
+        const headers = {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        };
+        
         const response = await fetch(
-          `https://stellarwebsocket.shop/api/estshara/${id}`
+          `https://stellarwebsocket.shop/api/estshara/${id}`,
+          { headers }
         );
         const data = await response.json();
         
@@ -43,11 +54,17 @@ export default function ReviewerConsultation() {
       }
     };
 
-    // Fetch lawyers list from the updated API endpoint
+    // Fetch lawyers list with auth header
     const fetchLawyers = async () => {
       try {
+        const headers = {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        };
+        
         const response = await fetch(
-          "https://stellarwebsocket.shop/api/users-lawyers"
+          "https://stellarwebsocket.shop/api/users-lawyers",
+          { headers }
         );
         const result = await response.json();
         
@@ -74,97 +91,106 @@ export default function ReviewerConsultation() {
 
     fetchConsultation();
     fetchLawyers();
-  }, [id]);
+  }, [id, token]);
 
   const handleApprove = async () => {
-    if (!selectedLawyer) {
-      Swal.fire({
-        icon: "warning",
-        title: "تحذير",
-        text: "يجب اختيار محامي أولاً",
-      });
-      return;
-    }
+  if (!selectedLawyer) {
+    Swal.fire({
+      icon: "warning",
+      title: "تحذير",
+      text: "يجب اختيار محامي أولاً",
+    });
+    return;
+  }
 
-    try {
-      console.log("Approving consultation with ID:", id);
-    console.log("Selected Lawyer Value Before Submit:", selectedLawyer);
+  try {
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded'
+    };
 
-      const response = await fetch(
-        `https://stellarwebsocket.shop/api/estshara-reviewer-update/${id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams({
-  reviewer_status: "approved",
-  user_id: selectedLawyer?.toString(),
-}),
-        }
-      );
-
-      if (response.ok) {
-        Swal.fire({
-          icon: "success",
-          title: "تمت الموافقة",
-          text: `تم تحويل الاستشارة للمحامي بنجاح`,
-        }).then(() => {
-          navigate("/reviewer/dashboard");
-        });
-      } else {
-        throw new Error("Failed to update status");
+    const response = await fetch(
+      `https://stellarwebsocket.shop/api/estshara-reviewer-update/${id}`,
+      {
+        method: "POST",
+        headers,
+        body: new URLSearchParams({
+          reviewer_status: "approved",
+          user_id: selectedLawyer.toString(),
+        }),
       }
-    } catch (err) {
+    );
+
+    if (response.ok) {
       Swal.fire({
-        icon: "error",
-        title: "خطأ",
-        text: "حدث خطأ أثناء الموافقة على الاستشارة",
+        icon: "success",
+        title: "تمت الموافقة",
+        text: `تم تحويل الاستشارة للمحامي بنجاح`,
+      }).then(() => {
+        navigate("/reviewer/dashboard");
       });
+    } else {
+      throw new Error("Failed to update status");
     }
-  };
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "خطأ",
+      text: "حدث خطأ أثناء الموافقة على الاستشارة",
+    });
+  }
+};
 
   const handleReject = async () => {
-    if (!rejectionReason) {
-      Swal.fire({
-        icon: "warning",
-        title: "تحذير",
-        text: "يرجى كتابة سبب الرفض",
-      });
-      return;
-    }
+  if (!rejectionReason) {
+    Swal.fire({
+      icon: "warning",
+      title: "تحذير",
+      text: "يرجى كتابة سبب الرفض",
+    });
+    return;
+  }
 
-    try {
-      const response = await fetch(
-        `https://stellarwebsocket.shop/api/estshara-reviewer-update/${id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams({
-            reviewer_status: "rejected",
-            user_id: "3", // Assuming this is the reviewer's ID
-            reviewer_rejection_reason: rejectionReason,
-          }),
-        }
-      );
+  try {
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded'
+    };
 
-      if (response.ok) {
-        Swal.fire({
-          icon: "success",
-          title: "تم الرفض",
-          text: "تم رفض الاستشارة بنجاح",
-        }).then(() => {
-          navigate("/reviewer/dashboard");
-        });
-      } else {
-        throw new Error("Failed to update status");
+    const response = await fetch(
+      `https://stellarwebsocket.shop/api/estshara-reviewer-update/${id}`,
+      {
+        method: "POST",
+        headers,
+        body: new URLSearchParams({
+          reviewer_status: "rejected",
+          reviewer_rejection_reason: rejectionReason,
+        }),
       }
-    } catch (err) {
+    );
+
+    if (response.ok) {
       Swal.fire({
-        icon: "error",
-        title: "خطأ",
-        text: "حدث خطأ أثناء رفض الاستشارة",
+        icon: "success",
+        title: "تم الرفض",
+        text: "تم رفض الاستشارة بنجاح",
+      }).then(() => {
+        navigate("/reviewer/dashboard");
       });
+    } else {
+      throw new Error("Failed to update status");
     }
-  };
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "خطأ",
+      text: "حدث خطأ أثناء رفض الاستشارة",
+    });
+  }
+};
+
 
   if (loading) {
     return (

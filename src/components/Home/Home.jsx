@@ -26,75 +26,84 @@ export default function Home() {
   }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+  e.preventDefault();
+  setIsLoading(true);
 
-    const form = e.target;
-    const formData = new FormData(form);
+  const form = e.target;
+  const formData = new FormData(form);
 
-    const filesInput = form.querySelector('input[name="documents[]"]');
-    const files = filesInput?.files || [];
-    const maxFiles = 3;
-    const maxFileSizeInBytes = 5 * 1024 * 1024 * 1024; // 5GB
+  // Get phone number and clean it (remove leading zeros)
+  const phoneNumber = form.querySelector('#phone_number').value;
+  const cleanedPhoneNumber = phoneNumber.replace(/^0+/, '');
+  
+  // Update the phone number in formData with cleaned version
+  formData.set('phone', cleanedPhoneNumber);
 
-    if (files.length > maxFiles) {
+  // Rest of your validation code...
+  const filesInput = form.querySelector('input[name="documents[]"]');
+  const files = filesInput?.files || [];
+  const maxFiles = 3;
+  const maxFileSizeInBytes = 5 * 1024 * 1024 * 1024; // 5GB
+
+  if (files.length > maxFiles) {
+    Swal.fire({
+      icon: "error",
+      title: "عدد الملفات كبير",
+      text: `الحد الأقصى لعدد الملفات هو ${maxFiles}.`,
+    });
+    setIsLoading(false);
+    return;
+  }
+
+  for (let file of files) {
+    if (file.size > maxFileSizeInBytes) {
       Swal.fire({
         icon: "error",
-        title: "عدد الملفات كبير",
-        text: `الحد الأقصى لعدد الملفات هو ${maxFiles}.`,
+        title: "حجم الملف كبير",
+        text: `الحد الأقصى لحجم كل ملف هو 5 جيجابايت.`,
       });
       setIsLoading(false);
       return;
     }
+  }
 
-    for (let file of files) {
-      if (file.size > maxFileSizeInBytes) {
-        Swal.fire({
-          icon: "error",
-          title: "حجم الملف كبير",
-          text: `الحد الأقصى لحجم كل ملف هو 5 جيجابايت.`,
-        });
-        setIsLoading(false);
-        return;
-      }
-    }
+  console.log("Submitting form data:", Object.fromEntries(formData.entries()));
 
-    console.log("Submitting form data:", Object.fromEntries(formData.entries()));
-
-    try {
-      const response = await fetch("https://stellarwebsocket.shop/api/estshara", {
-        method: "POST",
-        body: formData,
-        mode: "cors",
+  try {
+    const response = await fetch("https://stellarwebsocket.shop/api/estshara", {
+      method: "POST",
+      body: formData,
+      mode: "cors",
+    });
+    
+    console.log("Response:", response);
+    if (response.ok) {
+      Swal.fire({
+        icon: "success",
+        title: "تم الإرسال!",
+        text: "تم إرسال طلب الاستشارة بنجاح.",
       });
-      console.log("Response:", response);
-      if (response.ok) {
-        Swal.fire({
-          icon: "success",
-          title: "تم الإرسال!",
-          text: "تم إرسال طلب الاستشارة بنجاح.",
-        });
-        form.reset();
-      } else {
-        const errorText = await response.text();
-        console.error("Server responded with error:", errorText);
-        Swal.fire({
-          icon: "error",
-          title: "خطأ",
-          text: "حدث خطأ أثناء إرسال الطلب. حاول مرة أخرى.",
-        });
-      }
-    } catch (error) {
-      console.error("Network error:", error.message || error);
+      form.reset();
+    } else {
+      const errorText = await response.text();
+      console.error("Server responded with error:", errorText);
       Swal.fire({
         icon: "error",
-        title: "تعذر الاتصال بالخادم",
-        text: "يرجى التحقق من الاتصال أو المحاولة لاحقاً.",
+        title: "خطأ",
+        text: "حدث خطأ أثناء إرسال الطلب. حاول مرة أخرى.",
       });
-    } finally {
-      setIsLoading(false);
     }
-  };
+  } catch (error) {
+    console.error("Network error:", error.message || error);
+    Swal.fire({
+      icon: "error",
+      title: "تعذر الاتصال بالخادم",
+      text: "يرجى التحقق من الاتصال أو المحاولة لاحقاً.",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="container inner">
@@ -156,12 +165,16 @@ export default function Home() {
                     </div>
                     <div className="col-md-6 mb-4">
                       <label className="form-label">
-                        الجنس <span className="required">*</span>
+                        الجنسية <span className="required">*</span>
                       </label>
-                      <select name="gender" className="form-control" required>
+                      <select
+                        name="nationality"
+                        className="form-control"
+                        required
+                      >
                         <option value="">-- اختر --</option>
-                        <option value="male">ذكر</option>
-                        <option value="female">انثى</option>
+                        <option value="سعودي">سعودي</option>
+                        <option value="مقيم">مقيم</option>
                       </select>
                     </div>
                   </div>
@@ -195,16 +208,12 @@ export default function Home() {
                   <div className="row">
                     <div className="col-md-6 mb-4">
                       <label className="form-label">
-                        الجنسية <span className="required">*</span>
+                        الجنس <span className="required">*</span>
                       </label>
-                      <select
-                        name="nationality"
-                        className="form-control"
-                        required
-                      >
+                      <select name="gender" className="form-control" required>
                         <option value="">-- اختر --</option>
-                        <option value="سعودي">سعودي</option>
-                        <option value="مقيم">مقيم</option>
+                        <option value="male">ذكر</option>
+                        <option value="female">انثى</option>
                       </select>
                     </div>
                     <div className="col-md-6 mb-4">
@@ -262,16 +271,77 @@ export default function Home() {
 
                   <div className="row">
                     <div className="col-md-6 mb-4">
-                      <label className="form-label">
-                        رقم الجوال <span className="required">*</span>
-                      </label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        className="form-control"
-                        required
-                      />
-                    </div>
+  <label className="form-label">
+    رقم الجوال <span className="required">*</span>
+  </label>
+  <div className="d-flex gap-2">
+    <select
+      name="country_code"
+      className="form-select"
+      style={{ maxWidth: "180px" }}
+      required
+    >
+      <option value="+966" selected>+966 Saudi Arabia</option>
+      <option value="+20">+20 Egypt</option>
+      <option value="+212">+212 Morocco</option>
+      <option value="+213">+213 Algeria</option>
+      <option value="+216">+216 Tunisia</option>
+      <option value="+218">+218 Libya</option>
+      <option value="+220">+220 Gambia</option>
+      <option value="+221">+221 Senegal</option>
+      <option value="+222">+222 Mauritania</option>
+      <option value="+223">+223 Mali</option>
+      <option value="+224">+224 Guinea</option>
+      <option value="+226">+226 Burkina Faso</option>
+      <option value="+227">+227 Niger</option>
+      <option value="+228">+228 Togo</option>
+      <option value="+229">+229 Benin</option>
+      <option value="+231">+231 Liberia</option>
+      <option value="+233">+233 Ghana</option>
+      <option value="+234">+234 Nigeria</option>
+      <option value="+235">+235 Chad</option>
+      <option value="+237">+237 Cameroon</option>
+      <option value="+249">+249 Sudan</option>
+      <option value="+250">+250 Rwanda</option>
+      <option value="+251">+251 Ethiopia</option>
+      <option value="+252">+252 Somalia</option>
+      <option value="+253">+253 Djibouti</option>
+      <option value="+254">+254 Kenya</option>
+      <option value="+255">+255 Tanzania</option>
+      <option value="+256">+256 Uganda</option>
+      <option value="+257">+257 Burundi</option>
+      <option value="+258">+258 Mozambique</option>
+      <option value="+260">+260 Zambia</option>
+      <option value="+263">+263 Zimbabwe</option>
+      <option value="+265">+265 Malawi</option>
+      <option value="+269">+269 Comoros</option>
+      <option value="+27">+27 South Africa</option>
+      <option value="+90">+90 Turkey</option>
+      <option value="+961">+961 Lebanon</option>
+      <option value="+962">+962 Jordan</option>
+      <option value="+963">+963 Syria</option>
+      <option value="+964">+964 Iraq</option>
+      <option value="+965">+965 Kuwait</option>
+      <option value="+967">+967 Yemen</option>
+      <option value="+968">+968 Oman</option>
+      <option value="+970">+970 Palestine</option>
+      <option value="+971">+971 United Arab Emirates</option>
+      <option value="+972">+972 Israel</option>
+      <option value="+973">+973 Bahrain</option>
+      <option value="+974">+974 Qatar</option>
+    </select>
+    <input
+  type="tel"
+  name="phone"  // Add name attribute back
+  className="form-control"
+  placeholder="5XXXXXXXX"
+  required
+  id="phone_number"
+/>
+  </div>
+</div>
+
+
                     <div className="col-md-6 mb-4">
                       <label className="form-label">
                         البريد الإلكتروني <span className="required">*</span>

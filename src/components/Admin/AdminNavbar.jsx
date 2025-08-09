@@ -92,27 +92,27 @@ export default function AdminNavbar() {
       </nav>
 
       {/* Responsive Styles */}
-      <style jsx>{`
-        @media (max-width: 575.98px) {
-          .navbar-nav {
-            padding: 0.5rem 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            align-items: center;
-          }
-          .nav-item {
-            width: 100%;
-            text-align: center;
-          }
-          .nav-link {
-            padding: 0.75rem 0.5rem !important;
-            font-size: 0.9rem !important;
-            background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 0.25rem;
-          }
-        }
-      `}</style>
+      <style>{`
+  @media (max-width: 575.98px) {
+    .navbar-nav {
+      padding: 0.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .nav-item {
+      width: 100%;
+      text-align: center;
+    }
+    .nav-link {
+      padding: 0.75rem 0.5rem !important;
+      font-size: 0.9rem !important;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 0.25rem;
+    }
+  }
+`}</style>
     </div>
   );
 }

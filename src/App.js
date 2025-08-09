@@ -1,3 +1,4 @@
+// src/App.js
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -17,9 +18,15 @@ import AdminNavbar from "./components/Admin/AdminNavbar";
 import Home from "./components/Home/Home";
 import Login from "./components/Login/Login";
 import NotFound from "./components/NotFound/NotFound";
+import PrivacyPolicy from "./components/Privacy/PrivacyPolicy";
+import Footer from "./components/Footer/Footer";
+
+// ✅ Public Pages
+import EstsharaView from "./components/Public/EstsharaView"; // ← أضفت الصفحة الجديدة
 
 // ✅ Admin Pages
 import AdminDashboard from "./components/Admin/AdminDashboard";
+import EstsharaDetails from "./components/Admin/EstsharaDetails";
 
 // ✅ Reviewer Pages
 import ReviewerDashboard from "./components/Reviewer/ReviewerDashboard";
@@ -67,7 +74,7 @@ library.add(
   faUserShield
 );
 
-// ✅ Layout component with dynamic navbar
+// ✅ Layout component with dynamic navbar and footer
 function Layout() {
   const location = useLocation();
   const path = location.pathname;
@@ -79,14 +86,20 @@ function Layout() {
   else if (path.startsWith("/approver")) NavbarComponent = ApproverNavbar;
   else if (path.startsWith("/admin")) NavbarComponent = AdminNavbar;
 
+  // الصفحات العامة التي يظهر فيها الفوتر
+  const showFooter = ["/", "/privacy-policy"].includes(path);
+
   return (
     <>
-      <NavbarComponent />
+      {/* ✅ Navbar يظهر في كل الصفحات ما عدا صفحة عرض الاستشارة للمستفيد */}
+      {!path.startsWith("/estshara-view") && <NavbarComponent />}
 
       <Routes>
         {/* ✅ Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/estshara-view/:token" element={<EstsharaView />} /> {/* ← المسار الجديد */}
 
         {/* ✅ Admin Routes */}
         <Route
@@ -94,6 +107,14 @@ function Layout() {
           element={
             <ProtectedRoute allowedRoles={["admin"]}>
               <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/estshara/:id"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <EstsharaDetails />
             </ProtectedRoute>
           }
         />
@@ -203,6 +224,8 @@ function Layout() {
         {/* ✅ Catch-all (404) */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+
+      {showFooter && <Footer />}
     </>
   );
 }
